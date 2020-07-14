@@ -11,6 +11,7 @@ that I need for this project
 """
 
 #Initial packages I will need to create the api request and dump into json
+import config
 import datetime
 import requests
 import pandas as pd
@@ -21,7 +22,7 @@ ts = datetime.datetime.now().isoformat()
 
 print(ts)
 
-npi_file = "*****************************************m.xls"
+npi_file = config.npi_file
 npi = pd.read_excel(npi_file, header = None)
 #Want to give my column a legible name 
 npi.columns = ['npi']
@@ -69,7 +70,7 @@ for num in npi['npi']:
     else:
         print("ERROR CONTACTING API")
    
-organization_name.to_csv(r'**************************)
+organization_name.to_csv(config.output_file)
 
 
 
