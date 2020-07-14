@@ -28,12 +28,6 @@ npi = pd.read_excel(npi_file, header = None)
 npi.columns = ['npi']
 
 
-#make my empy json to dump information into
-#This actually ended up being a nasy list of dicts of discts
-npi_json = []
-
-
-
 #Making my column names
 cols = ['NPI', 'Organization Name', 'zipcode', 'state']     
 organization_name = pd.DataFrame( columns = cols) 
