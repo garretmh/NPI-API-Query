@@ -43,33 +43,34 @@ organization_name = pd.DataFrame( columns = cols)
 print("With dataframe :\n npi")
 print("\nIterating over rows using index attribute :\n")
 for num in npi['npi']:
-    api = "https://npiregistry.cms.hhs.gov/api/?number="+str(num)+"&enumeration_type=&organization_name=&state=&country_code=&limit=&skip=&version=2.0"
+    api = "https://npiregistry.cms.hhs.gov/api/?number="+str(num)+"&version=2.0"
     pulled_data = requests.get(api)
     if pulled_data.status_code == 200:
         print("Sucessful Query of API "+ str( num))
         source = pulled_data.json()
 
+        # Error response
+        if "Errors" in source:
+            print("- Recieved error")
+            continue
 
-        for key in source.keys():
-            if key == 'result_count':
-                continue
-            elif key == 'Errors':
-                pass
-            elif source['result_count'] == 0:
-                pass
-    
-   
-            else:
-                number = source['results'][0]['number']
-                org_name = source['results'][0]['basic']['name']
-                zipcode = source['results'][0]['addresses'][1]['postal_code']
-                state = source['results'][0]['addresses'][1]['state']
-                organization_name  = organization_name.append({'NPI': number, 'Organization Name': org_name, 'zipcode': zipcode, 'state':state}, ignore_index = True)   
-   
-        
+        # No matches found
+        if len(source["results"]) == 0:
+            print("- No matches found")
+            continue
+
+        first_result = source["results"][0]
+        first_address = first_result["addresses"][0]
+        org = {
+            "NPI": first_result["number"],
+            "Organization Name": first_result["basic"]["name"],
+            "zipcode": first_address["postal_code"],
+            "state": first_address["state"]
+        }
+        organization_name = organization_name.append(org, ignore_index=True)
     else:
         print("ERROR CONTACTING API")
-   
+
 organization_name.to_csv(config.output_file)
 
 
