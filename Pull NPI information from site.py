@@ -17,30 +17,29 @@ import requests
 import pandas as pd
 
 
-
 ts = datetime.datetime.now().isoformat()
 
 print(ts)
 
 npi_file = config.npi_file
-npi = pd.read_excel(npi_file, header = None)
-#Want to give my column a legible name 
+npi = pd.read_excel(npi_file, header=None)
+#Want to give my column a legible name
 npi.columns = ['npi']
 
 
 #Making my column names
-cols = ['NPI', 'Organization Name', 'zipcode', 'state']     
-organization_name = pd.DataFrame( columns = cols) 
+cols = ['NPI', 'Organization Name', 'zipcode', 'state']
+organization_name = pd.DataFrame(columns=cols)
 
 
-#I will iterate thru the entire list and dump them into a csv file 
+#I will iterate thru the entire list and dump them into a csv file
 print("With dataframe :\n npi")
 print("\nIterating over rows using index attribute :\n")
 for num in npi['npi']:
     api = "https://npiregistry.cms.hhs.gov/api/?number="+str(num)+"&version=2.0"
     pulled_data = requests.get(api)
     if pulled_data.status_code == 200:
-        print("Sucessful Query of API "+ str( num))
+        print("Sucessful Query of API " + str(num))
         source = pulled_data.json()
 
         # Error response
@@ -66,6 +65,3 @@ for num in npi['npi']:
         print("ERROR CONTACTING API")
 
 organization_name.to_csv(config.output_file)
-
-
-
